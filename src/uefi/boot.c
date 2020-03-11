@@ -139,7 +139,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *system_table)
         goto Error;
 
     //读取内核
-    staus = read_kernel((void *)0x0);
+    staus = read_kernel((void *)0x100000);
     if (staus != EFI_SUCCESS)
         goto Error;
 
@@ -149,7 +149,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *system_table)
     uefi_call_wrapper(BS->ExitBootServices, 2, image_handle, key);
 
     //跳转内核
-    int (*main_kernel)(Info) = (int (*)(Info))0x0;
+    int (*main_kernel)(Info) = (int (*)(Info))0x100000;
     main_kernel(info);
 
     //发生错误退出UEFI
