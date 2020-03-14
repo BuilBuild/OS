@@ -31,6 +31,7 @@ typedef struct
 {
     Memory_map memory_map;
     Video_mode video_mode;
+    uint64_t kernel_size;
 } Info;
 
 extern Info info;

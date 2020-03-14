@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-static Video_mode *video_mode = &info.video_mode;
+static const Video_mode *const video_mode = &info.video_mode;
 
 static size_t frame_index = 0;
 
