@@ -5,7 +5,7 @@
 
 #include "info.h"
 
-static EFI_STATUS read_kernel(void *buf)
+static EFI_STATUS read_kernel(Info *info, void *buf)
 {
     EFI_STATUS status;
 
@@ -48,11 +48,14 @@ static EFI_STATUS read_kernel(void *buf)
     char kernel_info_buf[file_info_size];
     kernel_info = (EFI_FILE_INFO *)kernel_info_buf;
     uefi_call_wrapper(kernel->GetInfo, 4, kernel, &fi_guid, &file_info_size, &kernel_info_buf);
+
     Print(L"/boot/kernel.bin file size %lu bytes\n", kernel_info->FileSize);
 
     uefi_call_wrapper(kernel->Read, 3, kernel, &kernel_info->FileSize, buf);
     uefi_call_wrapper(kernel->Close, 1, kernel);
     uefi_call_wrapper(gBS->FreePool, 1, handle_buf);
+
+    info->kernel_size = kernel_info->FileSize;
     return EFI_SUCCESS;
 }
 
@@ -139,7 +142,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *system_table)
         goto Error;
 
     //读取内核
-    staus = read_kernel((void *)0x100000);
+    staus = read_kernel(&info, (void *)0x100000);
     if (staus != EFI_SUCCESS)
         goto Error;
 
@@ -149,8 +152,8 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *system_table)
     uefi_call_wrapper(BS->ExitBootServices, 2, image_handle, key);
 
     //跳转内核
-    int (*main_kernel)(Info) = (int (*)(Info))0x100000;
-    main_kernel(info);
+    int (*main_kernel)(Info *) = (int (*)(Info *))0x100000;
+    main_kernel(&info);
 
     //发生错误退出UEFI
 Error:

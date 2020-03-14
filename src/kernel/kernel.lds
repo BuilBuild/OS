@@ -2,13 +2,13 @@ OUTPUT_FORMAT("elf64-x86-64", "elf64-x86-64", "elf64-x86-64")
 
 OUTPUT_ARCH(i386:x86-64)
 
-
-ENTRY(main)
+ENTRY(main);
 
 SECTIONS
 {
 	. = 0x100000;
-	.text : {*(.text)}
+	.text : {*(.begin) *(.text)}
+	.rodata : {*(.rodata)}
 	.data : {*(.data)}
 	.bss : {*(.bss)}
 }
