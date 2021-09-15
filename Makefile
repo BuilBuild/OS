@@ -6,6 +6,11 @@ D = -Wall -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DEFI_FUNCTION_
 all:
 	make bootx64.efi
 	make kernel.bin
+	mkdir -p ./OS/boot
+	mkdir -p ./OS/efi/boot
+	cp kernel.bin ./OS/boot/
+	cp bootx64.efi ./OS/efi/boot
+	mkisofs -r -o OS.iso OS
 
 .PHONY : bootx64.efi
 bootx64.efi:
@@ -26,6 +31,6 @@ kernel.bin:
 	rm ./src/kernel/kernel.elf
 
 .PHONY : clean
-ALL_OBJ = bootx64.efi kernel.bin
+ALL_OBJ = bootx64.efi kernel.bin kernel.elf OS.iso OS
 clear:
-	-rm $(ALL_OBJ)
+	-rm -rf $(ALL_OBJ)
